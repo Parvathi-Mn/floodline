@@ -1,5 +1,24 @@
-client:
-  name: Kerala SDMA
-  languages: [ml, en, manglish]
-  emergency_numbers: []
-districts: []
+id: kerala
+name: Kerala State Disaster Management Authority (demo deployment)
+languages: [ml, en, manglish]
+
+emergency_numbers:
+  - {name: Unified Emergency, number: "112", verified: false}
+  - {name: Disaster Control Room, number: "1077", verified: false}
+  - {name: Ambulance, number: "108", verified: false}
+
+districts:
+  - {id: thiruvananthapuram, name: Thiruvananthapuram, name_ml: തിരുവനന്തപുരം, lat: 8.5241, lon: 76.9366, primary_hazard: coastal, secondary_hazards: [urban_flood]}
+  - {id: kollam, name: Kollam, name_ml: കൊല്ലം, lat: 8.8932, lon: 76.6141, primary_hazard: coastal, secondary_hazards: [backwater_flood]}
+  - {id: pathanamthitta, name: Pathanamthitta, name_ml: പത്തനംതിട്ട, lat: 9.2648, lon: 76.7870, primary_hazard: river_flood, secondary_hazards: [landslide]}
+  - {id: alappuzha, name: Alappuzha, name_ml: ആലപ്പുഴ, lat: 9.4981, lon: 76.3388, primary_hazard: backwater_flood, secondary_hazards: [coastal]}
+  - {id: kottayam, name: Kottayam, name_ml: കോട്ടയം, lat: 9.5916, lon: 76.5222, primary_hazard: backwater_flood, secondary_hazards: [river_flood]}
+  - {id: idukki, name: Idukki, name_ml: ഇടുക്കി, lat: 9.8494, lon: 76.9710, primary_hazard: landslide, secondary_hazards: [river_flood]}
+  - {id: ernakulam, name: Ernakulam, name_ml: എറണാകുളം, lat: 9.9816, lon: 76.2999, primary_hazard: urban_flood, secondary_hazards: [river_flood, coastal]}
+  - {id: thrissur, name: Thrissur, name_ml: തൃശ്ശൂർ, lat: 10.5276, lon: 76.2144, primary_hazard: river_flood, secondary_hazards: [urban_flood]}
+  - {id: palakkad, name: Palakkad, name_ml: പാലക്കാട്, lat: 10.7867, lon: 76.6548, primary_hazard: river_flood, secondary_hazards: [landslide]}
+  - {id: malappuram, name: Malappuram, name_ml: മലപ്പുറം, lat: 11.0510, lon: 76.0711, primary_hazard: river_flood, secondary_hazards: [landslide]}
+  - {id: kozhikode, name: Kozhikode, name_ml: കോഴിക്കോട്, lat: 11.2588, lon: 75.7804, primary_hazard: urban_flood, secondary_hazards: [landslide]}
+  - {id: wayanad, name: Wayanad, name_ml: വയനാട്, lat: 11.6085, lon: 76.0830, primary_hazard: landslide, secondary_hazards: [river_flood]}
+  - {id: kannur, name: Kannur, name_ml: കണ്ണൂർ, lat: 11.8745, lon: 75.3704, primary_hazard: river_flood, secondary_hazards: [landslide, coastal]}
+  - {id: kasaragod, name: Kasaragod, name_ml: കാസർഗോഡ്, lat: 12.4996, lon: 74.9869, primary_hazard: river_flood, secondary_hazards: [coastal]}

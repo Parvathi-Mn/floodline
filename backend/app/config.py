@@ -56,6 +56,9 @@ class Client(BaseModel):
             raise ValueError("duplicate district ids")
         return self
 
+    def get_district(self, district_id: str) -> District | None:
+        return next((d for d in self.districts if d.id == district_id.lower()), None)
+
 
 def load_client(client_id: str) -> Client:
     path = CLIENTS_DIR / f"{client_id}.yaml"
