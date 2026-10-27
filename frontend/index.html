@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floodline: Kerala flood helpline (demo)</title>
+<style>
+  :root { --bg:#f4f6f8; --card:#ffffff; --text:#1c2733; --user:#0b5fa5; --bot:#e6edf3; --warn:#b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#10161c; --card:#18222b; --text:#e6edf3; --user:#2d7fc4; --bot:#243240; --warn:#ff8a80; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text);
+         display:flex; flex-direction:column; height:100vh; height:100dvh; }
+  header { padding:12px 16px; background:var(--card); border-bottom:1px solid rgba(128,128,128,.3); }
+  header h1 { margin:0; font-size:1.1rem; }
+  header p { margin:4px 0 0; font-size:.85rem; }
+  .warn { color:var(--warn); font-weight:600; }
+  #log { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:85%; padding:10px 14px; border-radius:14px; white-space:pre-wrap; line-height:1.4; }
+  .msg.user { align-self:flex-end; background:var(--user); color:#fff; }
+  .msg.bot { align-self:flex-start; background:var(--bot); }
+  .msg.error { border:1px solid var(--warn); }
+  form { display:flex; gap:8px; padding:12px; background:var(--card); border-top:1px solid rgba(128,128,128,.3); }
+  input { flex:1; padding:12px; font-size:1rem; border-radius:10px; border:1px solid rgba(128,128,128,.5);
+          background:var(--bg); color:var(--text); }
+  button { padding:12px 18px; font-size:1rem; border:0; border-radius:10px; background:var(--user);
+           color:#fff; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Floodline: Kerala flood helpline (demo)</h1>
+  <p class="warn">Demo project, not an official service. In an emergency call 112.</p>
+  <p>You can write in Malayalam, English or Manglish.</p>
+</header>
+<div id="log" aria-live="polite"></div>
+<form id="form">
+  <input id="input" autocomplete="off" placeholder="Type your message..." maxlength="1000" aria-label="Message">
+  <button id="send" type="submit">Send</button>
+</form>
+<script>
+const log = document.getElementById("log");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send");
+let sessionId = null;
+
+function addMessage(text, cls) {
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+  // Never put model output into innerHTML. Text is added safely, and **bold** becomes <strong>.
+  text.split("**").forEach((chunk, i) => {
+    if (!chunk) return;
+    const node = document.createElement(i % 2 ? "strong" : "span");
+    node.textContent = chunk;
+    div.appendChild(node);
+  });
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  return div;
+}
+
+addMessage("Hello, I'm Floodline, an automated assistant. Tell me which district you are in and I can check the current rain-based flood risk.", "bot");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+  input.value = "";
+  addMessage(message, "user");
+  sendBtn.disabled = true;
+  const pending = addMessage("...", "bot");
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: message, session_id: sessionId }),
+    });
+    if (!res.ok) throw new Error("status " + res.status);
+    const data = await res.json();
+    sessionId = data.session_id;
+    pending.remove();
+    addMessage(data.reply, "bot");
+  } catch (err) {
+    pending.remove();
+    addMessage("Sorry, something went wrong. If anyone is in danger, call 112 now.", "bot error");
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
+  }
+});
+</script>
+</body>
+</html>
