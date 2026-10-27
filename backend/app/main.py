@@ -1,8 +1,10 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, StringConstraints
 
 from .agent.providers.gemini import GeminiProvider
@@ -104,3 +106,10 @@ def chat(
         provider, client, tools, history, body.message, settings.prompt_version
     )
     return ChatResponse(session_id=session_id, reply=reply)
+
+
+# Serve the chat page at "/". This MUST stay last: a mount at "/" matches every
+# URL, so anything registered after it would never be reached.
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+if FRONTEND_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
