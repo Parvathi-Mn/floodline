@@ -105,3 +105,34 @@ def test_prompt_includes_emergency_numbers():
     prompt = build_system_prompt("v1", "112 (national emergency)")
     assert "112 (national emergency)" in prompt
     assert "{{" not in prompt
+
+class FailingProvider:
+    def generate(self, system_prompt, messages, tools):
+        raise RuntimeError("quota exceeded: secret detail")
+
+
+def test_provider_failure_returns_fallback_not_crash():
+    answer, history = run(FailingProvider())
+    assert answer == FALLBACK
+    assert history[-1] == {"role": "assistant", "content": FALLBACK}
+
+
+def test_provider_failure_does_not_leak_details():
+    answer, history = run(FailingProvider())
+    assert "secret detail" not in answer
+    assert "secret detail" not in str(history)
+
+
+def test_raw_provider_data_is_kept_with_tool_calls():
+    provider = FakeProvider(
+        [
+            ProviderReply(
+                tool_calls=[ToolCall("get_risk", {"district": "wayanad"})],
+                raw="RAW-1",
+            ),
+            ProviderReply(text="Risk is high."),
+        ]
+    )
+    _, history = run(provider, [risk_tool()])
+    tool_call_msg = next(m for m in history if m.get("tool_calls"))
+    assert tool_call_msg["raw"] == "RAW-1"
