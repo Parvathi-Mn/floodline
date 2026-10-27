@@ -17,6 +17,7 @@ class ProviderReply:
 
     text: str | None = None
     tool_calls: list[ToolCall] = field(default_factory=list)
+    raw: Any = None  # provider data to send back unchanged (e.g. Gemini thought signatures)
 
 
 @dataclass

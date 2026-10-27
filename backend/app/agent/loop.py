@@ -1,7 +1,10 @@
 import json
+import logging
 from typing import Any
 
 from app.agent.models import LLMProvider, Tool, ToolCall
+
+logger = logging.getLogger(__name__)
 
 
 def execute_tool(call: ToolCall, tools: dict[str, Tool]) -> dict[str, Any]:
@@ -27,14 +30,19 @@ def run_turn(
 ) -> str:
     """Handle one user message. Returns the assistant's final text.
 
-    `fallback_text` is required on purpose: when the model fails, the caller
-    must still get a safe message (with emergency numbers from client config).
+    `fallback_text` is required on purpose: when the model fails or loops, the
+    caller must still get a safe message (with emergency numbers from config).
     """
     history.append({"role": "user", "content": user_text})
     tool_map = {t.name: t for t in tools}
 
     for _ in range(max_steps):
-        reply = provider.generate(system_prompt, history, tools)
+        try:
+            reply = provider.generate(system_prompt, history, tools)
+        except Exception as exc:  # noqa: BLE001 (a failing model must never crash the answer)
+            logger.warning("LLM provider failed: %s", type(exc).__name__)
+            history.append({"role": "assistant", "content": fallback_text})
+            return fallback_text
 
         if not reply.tool_calls:
             text = reply.text or fallback_text
@@ -45,6 +53,7 @@ def run_turn(
             {
                 "role": "assistant",
                 "tool_calls": [{"name": c.name, "args": c.args} for c in reply.tool_calls],
+                "raw": reply.raw,
             }
         )
         for call in reply.tool_calls:
