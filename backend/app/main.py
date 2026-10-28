@@ -80,6 +80,8 @@ def risk(
         raise HTTPException(
             503, f"Weather data unavailable. Emergency contacts: {contact_list(client)}"
         ) from e
+    return compute_risk(district, rain)
+
 
 
 class ChatRequest(BaseModel):
