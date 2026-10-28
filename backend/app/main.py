@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, StringConstraints
 
 from .agent.providers.gemini import GeminiProvider
 from .agent.tools import build_tools
-from .chat import SessionStore, handle_chat
+from .chat import SessionStore, contact_list, handle_chat
 from .config import Client, load_client
 from .risk import RiskResult, compute_risk
 from .settings import Settings, SettingsError, load_settings
@@ -77,8 +77,11 @@ def risk(
     try:
         rain = weather(district.lat, district.lon)
     except WeatherError as e:
-        raise HTTPException(503, "Weather data unavailable; refer caller to 1077") from e
+        raise HTTPException(
+            503, f"Weather data unavailable. Emergency contacts: {contact_list(client)}"
+        ) from e
     return compute_risk(district, rain)
+
 
 
 class ChatRequest(BaseModel):

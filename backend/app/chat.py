@@ -15,12 +15,16 @@ def emergency_numbers_text(client: Client) -> str:
     return "\n".join(f"- {n.name}: {n.number}" for n in client.emergency_numbers)
 
 
+def contact_list(client: Client) -> str:
+    """Example: 'Unified Emergency 112, District Disaster Control Room (toll-free) 1077'."""
+    return ", ".join(f"{n.name} {n.number}" for n in client.emergency_numbers)
+
+
 def fallback_message(client: Client) -> str:
     """Safe message used when the model fails. Numbers come from the client config."""
-    numbers = ", ".join(f"{n.name} {n.number}" for n in client.emergency_numbers)
     return (
         "Sorry, I'm having trouble right now. "
-        f"If anyone is in danger, call now: {numbers}."
+        f"If anyone is in danger, call now: {contact_list(client)}."
     )
 
 
