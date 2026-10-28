@@ -3,8 +3,9 @@ name: Kerala State Disaster Management Authority (demo deployment)
 languages: [ml, en, manglish]
 
 emergency_numbers:
-  - {name: Unified Emergency, number: "112", verified: false}
-  - {name: Disaster Control Room, number: "1077", verified: false}
+  - {name: Unified Emergency, number: "112", verified: true}
+  - {name: District Disaster Control Room (toll-free), number: "1077", verified: true}
+  - {name: State Disaster Control Room (toll-free), number: "1070", verified: true}
   - {name: Ambulance, number: "108", verified: false}
 
 districts:
