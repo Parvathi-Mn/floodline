@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 import app.main as main_module
 from app.agent.models import ProviderReply, ToolCall
-from app.chat import MAX_HISTORY_MESSAGES, SessionStore, fallback_message, handle_chat
+from app.chat import MAX_HISTORY_MESSAGES, SessionStore, fallback_message, handle_chat, contact_list
 from app.config import load_client
 from app.main import app, get_provider, get_sessions, get_settings, get_weather
 from app.settings import Settings, SettingsError
@@ -140,3 +140,7 @@ def test_overlong_history_is_reset():
 def test_fallback_message_lists_config_numbers():
     text = fallback_message(load_client("kerala"))
     assert "112" in text and "108" in text
+
+def test_contact_list_comes_from_config():
+    text = contact_list(load_client("kerala"))
+    assert "112" in text and "1077" in text
