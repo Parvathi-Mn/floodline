@@ -4,7 +4,13 @@ from fastapi.testclient import TestClient
 
 import app.main as main_module
 from app.agent.models import ProviderReply, ToolCall
-from app.chat import MAX_HISTORY_MESSAGES, SessionStore, fallback_message, handle_chat, contact_list
+from app.chat import (
+    MAX_HISTORY_MESSAGES,
+    SessionStore,
+    contact_list,
+    fallback_message,
+    handle_chat,
+)
 from app.config import load_client
 from app.main import app, get_provider, get_sessions, get_settings, get_weather
 from app.settings import Settings, SettingsError
